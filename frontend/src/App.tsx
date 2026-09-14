@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
@@ -10,6 +9,10 @@ import Projects from './pages/Projects';
 import Records from './pages/Records';
 import Approval from './pages/Approval';
 import Admin from './pages/Admin';
+import Attendance from './pages/Attendance';
+import Meetings from './pages/Meetings';
+import OfficeExpenses from './pages/OfficeExpenses';
+import Materials from './pages/Materials';
 import { useAuthStore } from './store/authStore';
 
 function App() {
@@ -25,6 +28,10 @@ function App() {
             <Route element={<Layout />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/projects" element={<Projects />} />
+              <Route path="/attendance" element={<Attendance />} />
+              <Route path="/meetings" element={<Meetings />} />
+              <Route path="/office-expenses" element={<OfficeExpenses />} />
+              <Route path="/materials" element={<Materials />} />
               <Route path="/records" element={<Records />} />
               <Route path="/approval" element={<Approval />} />
               <Route path="/admin" element={<Admin />} />

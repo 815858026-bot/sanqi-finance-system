@@ -1,14 +1,13 @@
-import React from 'react';
-import { Card, Row, Col, Statistic, Table, DatePicker } from 'antd';
-import { DollarOutlined, FileTextOutlined, CheckCircleOutlined, ClockCircleOutlined } from '@ant-design/icons';
+import { useEffect, useState } from 'react';
+import { Card, Row, Col, Statistic } from 'antd';
+import { DollarOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import apiClient from '../services/api';
 
 const Dashboard: React.FC = () => {
-  const [data, setData] = React.useState<any>(null);
-  const [loading, setLoading] = React.useState(true);
+  const [data, setData] = useState<any>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchDashboard();
   }, []);
 
@@ -18,8 +17,6 @@ const Dashboard: React.FC = () => {
       setData(response);
     } catch (error) {
       console.error(error);
-    } finally {
-      setLoading(false);
     }
   };
 
