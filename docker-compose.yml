@@ -1,0 +1,75 @@
+# 后端服务
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: sanqi-finance-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://sanqi:sanqi123@db:5432/sanqi_finance
+      - SECRET_KEY=SANQI_DESIGN_SECRET_KEY_CHANGE_IN_PRODUCTION
+      - DEBUG=False
+    depends_on:
+      - db
+    volumes:
+      - ./backend/static:/app/static
+      - ./backups:/data/backups
+    networks:
+      - sanqi-network
+    restart: unless-stopped
+
+  # 数据库
+  db:
+    image: postgres:15-alpine
+    container_name: sanqi-finance-db
+    environment:
+      - POSTGRES_DB=sanqi_finance
+      - POSTGRES_USER=sanqi
+      - POSTGRES_PASSWORD=sanqi123
+    ports:
+      - "5432:5432"
+    volumes:
+      - sanqi-db-data:/var/lib/postgresql/data
+    networks:
+      - sanqi-network
+    restart: unless-stopped
+
+  # 前端
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: sanqi-finance-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - sanqi-network
+    restart: unless-stopped
+
+  # Nginx 反向代理
+  nginx:
+    image: nginx:alpine
+    container_name: sanqi-finance-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - sanqi-network
+    restart: unless-stopped
+
+volumes:
+  sanqi-db-data:
+
+networks:
+  sanqi-network:
+    driver: bridge
