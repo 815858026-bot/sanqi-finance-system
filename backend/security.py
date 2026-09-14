@@ -4,7 +4,7 @@ import base64
 import hashlib
 import hmac
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Iterable
 
 from fastapi import Depends, HTTPException, status
@@ -35,8 +35,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
         salt = base64.b64decode(salt_b64)
         expected = base64.b64decode(digest_b64)
     except ValueError:
-        legacy = hashlib.sha256(plain_password.encode("utf-8")).hexdigest()
-        return hmac.compare_digest(legacy, hashed_password)
+        return False
 
     actual = hashlib.pbkdf2_hmac("sha256", plain_password.encode("utf-8"), salt, 100_000)
     return hmac.compare_digest(actual, expected)
@@ -44,7 +43,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
     payload = data.copy()
-    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=settings.access_token_expire_minutes))
+    expire = datetime.now(timezone.utc) + (expires_delta or timedelta(minutes=settings.access_token_expire_minutes))
     payload.update({"exp": expire})
     return jwt.encode(payload, settings.secret_key, algorithm=settings.algorithm)
 
