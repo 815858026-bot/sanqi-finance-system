@@ -34,7 +34,14 @@ def list_users(
     query = select(User)
     
     if role:
-        query = query.where(User.role == UserRole[role])
+        try:
+            role_enum = UserRole(role)
+        except ValueError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="无效的角色筛选条件"
+            ) from exc
+        query = query.where(User.role == role_enum)
     
     if is_active is not None:
         query = query.where(User.is_active == is_active)
@@ -53,6 +60,28 @@ def list_users(
         "is_active": user.is_active,
         "created_at": user.created_at
     } for user in users]
+
+
+@router.get("/options", summary="获取用户下拉选项")
+def list_user_options(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    获取用于表单选择的用户列表。
+    """
+    users = db.scalars(
+        select(User).where(User.is_active == True).order_by(User.full_name.asc())
+    ).all()
+    return [
+        {
+            "id": user.id,
+            "username": user.username,
+            "full_name": user.full_name,
+            "role": user.role.value
+        }
+        for user in users
+    ]
 
 @router.get("/{user_id}", response_model=UserDTO, summary="获取用户详情")
 def get_user(

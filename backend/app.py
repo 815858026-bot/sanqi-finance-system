@@ -5,14 +5,14 @@ import os
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.openapi.utils import get_openapi
+from fastapi.responses import JSONResponse
 
 from config import settings
 from models import init_db, Base, engine, SessionLocal, User, UserRole
 from security import get_password_hash
 
 # 导入路由
-from routes import auth, users, projects, records, approval, dashboard, audit
+from routes import approval, attendance, audit, auth, dashboard, meetings, projects, records, users
 
 # ============================================================================
 # FastAPI 应用信息
@@ -122,6 +122,8 @@ def startup_event():
 app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(projects.router)
+app.include_router(attendance.router)
+app.include_router(meetings.router)
 app.include_router(records.router)
 app.include_router(approval.router)
 app.include_router(dashboard.router)
@@ -162,10 +164,13 @@ async def global_exception_handler(request, exc):
     """
     全局错误处理器
     """
-    return {
-        "error": str(exc),
-        "status": "error"
-    }
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error": str(exc),
+            "status": "error"
+        }
+    )
 
 if __name__ == "__main__":
     import uvicorn
