@@ -1,7 +1,7 @@
 import React from 'react';
-import { Layout, Menu, Dropdown, Avatar, Button, Drawer } from 'antd';
+import { Layout, Menu, Dropdown, Avatar, Button } from 'antd';
 import { LogoutOutlined, UserOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 
 const { Header, Sider, Content } = Layout;
@@ -9,12 +9,15 @@ const { Header, Sider, Content } = Layout;
 const LayoutComponent: React.FC = () => {
   const [collapsed, setCollapsed] = React.useState(false);
   const navigate = useNavigate();
-  const { user, logout } = useAuthStore();
+  const location = useLocation();
+  const { logout } = useAuthStore();
 
   const menuItems = [
     { key: '/dashboard', label: '财务看板' },
     { key: '/projects', label: '项目管理' },
-    { key: '/records', label: '支出管理' },
+    { key: '/attendance', label: '考勤管理' },
+    { key: '/meetings', label: '会议纪要' },
+    { key: '/records', label: '办公费用' },
     { key: '/approval', label: '审批流程' },
     { key: '/admin', label: '系统管理' },
   ];
@@ -48,6 +51,7 @@ const LayoutComponent: React.FC = () => {
           theme="dark"
           mode="inline"
           items={menuItems}
+          selectedKeys={[location.pathname]}
           onClick={(e) => navigate(e.key)}
         />
       </Sider>
