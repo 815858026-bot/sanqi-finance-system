@@ -6,7 +6,15 @@ const Records: React.FC = () => {
   const [summary, setSummary] = React.useState<any>({});
 
   React.useEffect(() => {
-    apiClient.get('/api/records/summary').then(setSummary).catch(() => message.error('获取综合记录失败'));
+    const fetchSummary = async () => {
+      try {
+        const data = await apiClient.get('/api/records/summary');
+        setSummary(data);
+      } catch {
+        message.error('获取综合记录失败');
+      }
+    };
+    fetchSummary();
   }, []);
 
   return (

@@ -6,7 +6,15 @@ const Admin: React.FC = () => {
   const [users, setUsers] = React.useState<any[]>([]);
 
   React.useEffect(() => {
-    apiClient.get('/api/users').then(setUsers).catch(() => message.error('获取用户列表失败'));
+    const fetchUsers = async () => {
+      try {
+        const data = await apiClient.get('/api/users');
+        setUsers(data);
+      } catch {
+        message.error('获取用户列表失败');
+      }
+    };
+    fetchUsers();
   }, []);
 
   return (

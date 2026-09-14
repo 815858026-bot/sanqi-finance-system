@@ -6,7 +6,15 @@ const Approval: React.FC = () => {
   const [rows, setRows] = React.useState<any[]>([]);
 
   React.useEffect(() => {
-    apiClient.get('/api/approval/pending').then((data) => setRows(data.material_outbounds || [])).catch(() => message.error('获取待审批列表失败'));
+    const fetchPending = async () => {
+      try {
+        const data = await apiClient.get('/api/approval/pending');
+        setRows(data.material_outbounds || []);
+      } catch {
+        message.error('获取待审批列表失败');
+      }
+    };
+    fetchPending();
   }, []);
 
   return (
