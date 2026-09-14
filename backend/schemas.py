@@ -11,7 +11,7 @@ from models import LeaveType, LeaveUnit, ProjectMode, UserRole
 
 
 class BaseSchema(BaseModel):
-    model_config = ConfigDict(from_attributes=True, use_enum_values=True)
+    model_config = ConfigDict(from_attributes=True)
 
 
 class Token(BaseSchema):
