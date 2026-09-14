@@ -100,7 +100,7 @@ def create_user(
     db: Session = Depends(get_db)
 ):
     """
-    创建新员工账号
+    创建新用户账号
     - 超级管理员可以创建任何角色的用户
     - 财务主管只能创建财务人员
     """
